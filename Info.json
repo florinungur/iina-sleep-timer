@@ -1,9 +1,9 @@
 {
   "name": "Sleep Timer",
   "identifier": "com.florinungur.sleep-timer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "ghRepo": "florinungur/iina-sleep-timer",
-  "ghVersion": 1,
+  "ghVersion": 2,
   "description": "Pause playback after a set time. Use Plugin → Sleep Timer.",
   "author": {
     "name": "Florin Ungur",
