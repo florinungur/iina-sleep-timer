@@ -1,10 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <!-- Night-indigo rounded square; white crescent moon with two Zs rising out of its hollow -->
+  <!-- Night-indigo rounded square; white crescent moon with three Zs rising out of its hollow -->
+  <defs>
+    <!-- One Z; each copy scales it whole, stroke included, so all three keep the same shape -->
+    <path id="z" d="M 0 0 H 16 L 0 16 H 16" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </defs>
   <rect width="128" height="128" rx="22" fill="#312e81"/>
   <!-- Crescent: a radius-38 circle with a radius-34 circle cut from its upper right -->
-  <path d="M 48.63 33.54 A 38 38 0 1 0 90.15 85.44 A 34 34 0 0 1 48.63 33.54 Z" fill="#ffffff"/>
-  <g fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M 75 45 H 91 L 75 61 H 91"/>
-    <path d="M 97 23 H 107 L 97 33 H 107"/>
-  </g>
+  <path d="M 47.63 36.54 A 38 38 0 1 0 89.15 88.44 A 34 34 0 0 1 47.63 36.54 Z" fill="#ffffff"/>
+  <use href="#z" transform="translate(70 56)"/>
+  <use href="#z" transform="translate(88.1 34.9) scale(0.75)"/>
+  <use href="#z" transform="translate(101.7 18.3) scale(0.5625)"/>
 </svg>

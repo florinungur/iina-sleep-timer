@@ -1,4 +1,4 @@
-# <img src="assets/icon.svg" alt="" width="32" valign="middle"> Sleep Timer for IINA
+# <img src="assets/icon.svg" alt="" width="48" valign="middle"> Sleep Timer for IINA
 
 Pauses playback after 15, 30, 45, 60, or 90 minutes, or after a number of minutes you type, so you can fall asleep to a film without it playing all night.
 
