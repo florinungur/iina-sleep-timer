@@ -1,0 +1,13 @@
+{
+  "name": "Sleep Timer",
+  "identifier": "com.florinungur.sleep-timer",
+  "version": "1.0.0",
+  "description": "Pause playback after a chosen number of minutes.",
+  "author": {
+    "name": "Florin Ungur",
+    "url": "https://github.com/florinungur"
+  },
+  "entry": "main.js",
+  "permissions": [],
+  "preferenceDefaults": {}
+}
