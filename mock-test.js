@@ -21,7 +21,6 @@ function makeContext(promptAnswers) {
     menu: {
       item,
       addItem: (i) => state.items.push(i),
-      items: () => state.items,
       removeAllItems: () => { state.items = []; },
     },
     utils: { prompt: () => promptAnswers.shift() },
@@ -37,8 +36,7 @@ function makeContext(promptAnswers) {
   return state;
 }
 
-// IINA builds submenus with AppKit's auto-enabling, so an item there is enabled exactly when its action isn't null
-const sub = (s) => s.items[0].items.map((i) => ({ ...i, enabled: i.action !== null }));
+const sub = (s) => s.items[0].items;
 const find = (s, t) => sub(s).find((i) => i.title === t);
 const cancelItem = (s) => s.items.find((i) => i.title === "Cancel timer");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
