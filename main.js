@@ -65,12 +65,12 @@ function renderMenu() {
     menu.item("Custom…", askMinutes, {
       selected: running !== null && !PRESETS.includes(running),
     }),
-    menu.separator(),
-    menu.item("Cancel timer", cancel, { enabled: timer !== null }),
   ];
   const pauseAfter = menu.item("Pause after");
   items.forEach((item) => pauseAfter.addSubMenuItem(item));
   menu.addItem(pauseAfter);
+  // First level, because IINA's submenus auto-enable their items and ignore `enabled`.
+  menu.addItem(menu.item("Cancel timer", cancel, { enabled: timer !== null }));
 }
 
 renderMenu();

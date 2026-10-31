@@ -10,7 +10,7 @@ function makeContext(promptAnswers) {
   const item = (title, action, options) => {
     const o = options && typeof options === "object" ? options : {};
     return {
-      title, action: action ?? null,
+      title, action,
       selected: o.selected ?? false, enabled: o.enabled ?? true,
       items: [],
       addSubMenuItem(i) { this.items.push(i); return this; },
@@ -20,7 +20,6 @@ function makeContext(promptAnswers) {
     core: { pause: () => { state.pauses += 1; } },
     menu: {
       item,
-      separator: () => ({ ...item("", null, { enabled: false }), isSeparator: true }),
       addItem: (i) => state.items.push(i),
       items: () => state.items,
       removeAllItems: () => { state.items = []; },
@@ -38,27 +37,28 @@ function makeContext(promptAnswers) {
   return state;
 }
 
-const sub = (s) => s.items[0].items;
+// IINA builds submenus with AppKit's auto-enabling, so an item there is enabled exactly when its action isn't null
+const sub = (s) => s.items[0].items.map((i) => ({ ...i, enabled: i.action !== null }));
 const find = (s, t) => sub(s).find((i) => i.title === t);
+const cancelItem = (s) => s.items.find((i) => i.title === "Cancel timer");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 (async () => {
   // load
   let s = makeContext([]);
-  assert.strictEqual(s.items.length, 1);
-  assert.strictEqual(s.items[0].title, "Pause after");
+  assert.deepStrictEqual(s.items.map((i) => i.title), ["Pause after", "Cancel timer"]);
   assert.deepStrictEqual(sub(s).map((i) => i.title),
-    ["15 minutes", "30 minutes", "45 minutes", "60 minutes", "90 minutes", "Custom…", "", "Cancel timer"]);
-  assert.strictEqual(find(s, "Cancel timer").enabled, false);
+    ["15 minutes", "30 minutes", "45 minutes", "60 minutes", "90 minutes", "Custom…"]);
+  assert.strictEqual(cancelItem(s).enabled, false);
   assert.ok(sub(s).every((i) => !i.selected));
 
   // preset then cancel
   find(s, "15 minutes").action();
   assert.strictEqual(find(s, "15 minutes").selected, true);
-  assert.strictEqual(find(s, "Cancel timer").enabled, true);
-  find(s, "Cancel timer").action();
+  assert.strictEqual(cancelItem(s).enabled, true);
+  cancelItem(s).action();
   assert.ok(sub(s).every((i) => !i.selected));
-  assert.strictEqual(find(s, "Cancel timer").enabled, false);
+  assert.strictEqual(cancelItem(s).enabled, false);
   assert.ok(s.logs.includes("Sleep timer cancelled"));
   assert.strictEqual(s.timers.size, 0);
 
@@ -72,14 +72,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   assert.strictEqual(s.pauses, 1);
   assert.ok(s.logs.includes("Sleep timer fired after 0.001 min"), s.logs.join("|"));
   assert.ok(sub(s).every((i) => !i.selected));
-  assert.strictEqual(find(s, "Cancel timer").enabled, false);
+  assert.strictEqual(cancelItem(s).enabled, false);
   assert.strictEqual(s.timers.size, 0);
 
   // bad input sets nothing
   for (const bad of [null, undefined, "", "abc", "0", "-5"]) {
     s = makeContext([bad]);
     find(s, "Custom…").action();
-    assert.strictEqual(find(s, "Cancel timer").enabled, false, String(bad));
+    assert.strictEqual(cancelItem(s).enabled, false, String(bad));
     assert.strictEqual(s.timers.size, 0, String(bad));
   }
   console.log("all checks passed");
