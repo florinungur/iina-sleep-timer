@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "packageManager": "pnpm@11.3.0",
+  "scripts": {
+    "compile": "tsc --noEmit",
+    "test": "node mock-test.js main.js"
+  },
+  "devDependencies": {
+    "iina-plugin-definition": "^0.99.4",
+    "typescript": "^5.9.3"
+  }
+}
