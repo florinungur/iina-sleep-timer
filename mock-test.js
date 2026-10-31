@@ -6,7 +6,7 @@ const assert = require("assert");
 const [, , mainPath] = process.argv;
 
 function makeContext(promptAnswers) {
-  const state = { items: [], pauses: 0, logs: [], timers: new Map(), seq: 0 };
+  const state = { items: [], pauses: 0, logs: [], timers: new Map(), seq: 0, listeners: {} };
   const item = (title, action, options) => {
     const o = options && typeof options === "object" ? options : {};
     return {
@@ -18,10 +18,10 @@ function makeContext(promptAnswers) {
   };
   const iina = {
     core: { pause: () => { state.pauses += 1; } },
+    event: { on: (name, cb) => { state.listeners[name] = cb; } },
     menu: {
       item,
       addItem: (i) => state.items.push(i),
-      items: () => state.items,
       removeAllItems: () => { state.items = []; },
     },
     utils: { prompt: () => promptAnswers.shift() },
@@ -37,8 +37,7 @@ function makeContext(promptAnswers) {
   return state;
 }
 
-// IINA builds submenus with AppKit's auto-enabling, so an item there is enabled exactly when its action isn't null
-const sub = (s) => s.items[0].items.map((i) => ({ ...i, enabled: i.action !== null }));
+const sub = (s) => s.items[0].items;
 const find = (s, t) => sub(s).find((i) => i.title === t);
 const cancelItem = (s) => s.items.find((i) => i.title === "Cancel timer");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -82,5 +81,15 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     assert.strictEqual(cancelItem(s).enabled, false, String(bad));
     assert.strictEqual(s.timers.size, 0, String(bad));
   }
+
+  // closing the window cancels a running timer, and only a running one
+  s = makeContext([]);
+  s.listeners["iina.window-will-close"]();
+  assert.ok(!s.logs.includes("Sleep timer cancelled"));
+  find(s, "45 minutes").action();
+  s.listeners["iina.window-will-close"]();
+  assert.ok(sub(s).every((i) => !i.selected));
+  assert.strictEqual(cancelItem(s).enabled, false);
+  assert.strictEqual(s.timers.size, 0);
   console.log("all checks passed");
 })().catch((e) => { console.error(e); process.exit(1); });

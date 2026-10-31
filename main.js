@@ -1,6 +1,6 @@
 // @ts-check
 // Pauses the player after a chosen number of minutes, counted in wall-clock time.
-const { core, menu, utils, console } = iina;
+const { core, event, menu, utils, console } = iina;
 
 const PRESETS = [15, 30, 45, 60, 90];
 
@@ -72,5 +72,10 @@ function renderMenu() {
   // First level, because IINA's submenus auto-enable their items and ignore `enabled`.
   menu.addItem(menu.item("Cancel timer", cancel, { enabled: timer !== null }));
 }
+
+// IINA reuses a closed window's player for the next video, so a timer left running would pause that one.
+event.on("iina.window-will-close", () => {
+  if (timer) cancel();
+});
 
 renderMenu();
