@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "ghRepo": "florinungur/iina-sleep-timer",
   "ghVersion": 1,
-  "description": "Pause playback after a chosen number of minutes.",
+  "description": "Pause playback after a chosen number of minutes. Use Plugin → Sleep Timer.",
   "author": {
     "name": "Florin Ungur",
     "url": "https://github.com/florinungur"
